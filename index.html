@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kafilah Wasathiyah - Slide & Kuis Gurun Pasir</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <!-- Google Fonts: Amiri & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .font-amiri { font-family: 'Amiri', serif; }
+    .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .star-bg {
+      background-color: #0b0f19;
+      background-image: 
+        radial-gradient(1.5px 1.5px at 20px 30px, #fde68a, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 80px 120px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 160px 70px, #f59e0b, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 240px 180px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 320px 40px, #fde68a, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 400px 250px;
+    }
+    .arabesque-box {
+      border: 2px solid #b45309;
+      box-shadow: 0 0 20px rgba(217, 119, 6, 0.2);
+    }
+  </style>
+</head>
+<body class="star-bg text-amber-50 min-h-screen flex flex-col font-sans">
+  <div id="app" class="max-w-5xl mx-auto px-4 py-6 w-full flex-1 flex flex-col">
+    
+    <!-- Top Header -->
+    <header class="flex flex-wrap items-center justify-between gap-4 border-b border-amber-900/60 pb-4 mb-6">
+      <div class="flex items-center space-x-3">
+        <span class="text-3xl p-2 bg-amber-950 border border-amber-700/60 rounded-xl">🐪</span>
+        <div>
+          <h1 class="text-xl font-bold text-amber-300 font-amiri tracking-wide">Kafilah Wasathiyah &amp; Cahaya Akal</h1>
+          <p class="text-xs text-amber-200/60">Meniti Jalan Tengah di Antara Badai Ekstrem (Diktat Hal. 47-53)</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="tab-slides" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-600 text-white shadow">10 Slide</button>
+        <button id="tab-quiz" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-stone-900 text-amber-300 hover:bg-amber-950 border border-amber-800">20 Kuis</button>
+        <button id="tab-eval" class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-stone-900 text-amber-300 hover:bg-amber-950 border border-amber-800">Evaluasi</button>
+        <button id="audio-btn" class="p-1.5 px-2.5 rounded-lg bg-amber-950 border border-amber-800 text-xs text-amber-300" title="Suara">🔇</button>
+      </div>
+    </header>
+
+    <!-- Trail Progress -->
+    <div class="w-full bg-black/60 rounded-full h-2 mb-6 border border-amber-950 overflow-hidden">
+      <div id="progress-bar" class="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-200 h-full w-1/10 transition-all duration-300"></div>
+    </div>
+
+    <!-- VIEW 1: 10 SLIDES -->
+    <div id="view-slides-section" class="space-y-4">
+      <div class="arabesque-box rounded-2xl bg-gradient-to-b from-amber-950/40 via-stone-900/90 to-black p-6 sm:p-8 min-h-[460px] flex flex-col justify-between">
+        <div id="slide-render-area"></div>
+        <div class="flex justify-between items-center pt-6 border-t border-amber-900/40 mt-6">
+          <button id="prev-slide-btn" class="px-4 py-2 rounded-xl bg-amber-950 hover:bg-amber-900/60 border border-amber-800 text-xs sm:text-sm font-bold text-amber-200 disabled:opacity-30">❮ Pos Sebelumnya</button>
+          <span id="slide-step-counter" class="text-xs text-amber-400 font-bold">Pos 1 dari 10</span>
+          <button id="next-slide-btn" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-xs sm:text-sm font-bold text-white shadow">Pos Berikutnya ❯</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: 20 QUIZZES -->
+    <div id="view-quiz-section" class="hidden space-y-4">
+      <div class="flex items-center justify-between bg-black/50 p-3 rounded-xl border border-amber-900/50 text-xs">
+        <span id="quiz-badge" class="font-bold text-amber-400">Soal 1 dari 20</span>
+        <div class="flex space-x-3">
+          <span>⭐ Skor: <strong id="score-counter" class="text-amber-300">0</strong></span>
+          <span>🏺 Bekal: <strong id="water-counter" class="text-emerald-400">100%</strong></span>
+        </div>
+      </div>
+      <div class="arabesque-box rounded-2xl bg-gradient-to-b from-amber-950/40 via-stone-900/90 to-black p-6 sm:p-8 min-h-[420px]">
+        <div id="quiz-render-area"></div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: EVALUATION -->
+    <div id="view-eval-section" class="hidden space-y-6">
+      <div class="arabesque-box rounded-2xl bg-gradient-to-b from-amber-950/50 via-stone-900/90 to-black p-6 sm:p-8 text-center space-y-4">
+        <div class="inline-block p-4 rounded-full bg-amber-900/40 border-2 border-amber-500 text-4xl">🏆</div>
+        <h2 id="eval-title" class="text-2xl font-bold text-amber-200 font-amiri">Gelar: Pengembara Gurun</h2>
+        <div class="text-4xl font-extrabold text-amber-400" id="eval-percent">0%</div>
+        <p id="eval-desc" class="text-xs sm:text-sm text-amber-200/80 max-w-lg mx-auto leading-relaxed"></p>
+        <button id="eval-retry-btn" class="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 font-bold text-white text-xs sm:text-sm shadow">Ulangi Perjalanan Kuis</button>
+      </div>
+      <div id="eval-details" class="space-y-3"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // Audio synthesizer (Web Audio API)
+    let muted = true;
+    let actx = null;
+    function playBeep(f, dur) {
+      if (muted) return;
+      try {
+        if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+        if (actx.state === 'suspended') actx.resume();
+        const osc = actx.createOscillator();
+        const g = actx.createGain();
+        osc.frequency.value = f;
+        g.gain.setValueAtTime(0.12, actx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+        osc.connect(g);
+        g.connect(actx.destination);
+        osc.start();
+        osc.stop(actx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    document.getElementById('audio-btn').onclick = function() {
+      muted = !muted;
+      this.textContent = muted ? '🔇' : '🔊';
+      if (!muted) playBeep(600, 0.3);
+    };
+
+    // Data 10 Slides Presentasi
+    const SLIDES = [
+      {
+        id: 1, title: "Pintu Gerbang: Hakikat Wasathiyah",
+        arab: "وَكَذَٰلِكَ جَعَلْنَاكُمْ أُمَّةً وَسَطًا (البقرة: ١٤٣)",
+        desc: "Ahlus Sunnah berada di tengah antara jafa' (meremehkan) dan ghuluw (berlebihan). Menurut Ibnu Katsir, al-wasath bermakna al-khiyar wal ajwad (terbaik dan paling adil).",
+        left: "Tafrith / Jafa' (Meremehkan)", mid: "Wasathiyah (Adil & Terbaik)", right: "Ghuluw / Ifrath (Ekstrem)",
+        dalil: "Hadits Bukhari-Muslim: 'Innad dina yusr' (Agama itu mudah)."
+      },
+      {
+        id: 2, title: "Timbangan Tauhid: Rububiyyah & Uluhiyyah",
+        arab: "قُلْ هُوَ اللَّهُ أَحَدٌ (الإخلاص: ١)",
+        desc: "Ahlus Sunnah mengesakan Allah tanpa menolak wujud-Nya dan tanpa mencampuradukkan Pencipta dengan makhluk.",
+        left: "Komunisme Ateis ('La Ilaha wal Hayatu Maddah')", mid: "Mengesakan Allah (Suci dari Makhluk)", right: "Wahdatul Wujud ('Khaliq 'ainul makhluq')",
+        dalil: "Allah Maha Esa dan terpisah dari segala ciptaan-Nya."
+      },
+      {
+        id: 3, title: "Mata Air Asma' wa Sifat",
+        arab: "لَيْسَ كَمِثْلِهِ شَيْءٌ وَهُوَ السَّمِيعُ الْبَصِيرُ (الشورى: ١١)",
+        desc: "Menetapkan nama dan sifat yang Allah tetapkan bagi diri-Nya tanpa ta'thil (menolak) dan tanpa tamtsil (menyerupakan).",
+        left: "Mu'aththilah / Jahmiyyah (Menolak Sifat)", mid: "Itsbat Sifat Sesuai Keagungan Allah", right: "Musyabbihah / Karramiyyah (Menyerupakan)",
+        dalil: "Ayat ini membantah Musyabbihah di awal dan Mu'aththilah di akhir."
+      },
+      {
+        id: 4, title: "Tenda Penjaga Iman (Bab Al-Iman)",
+        arab: "وَإِن طَائِفَتَانِ مِنَ الْمُؤْمِنِينَ اقْتَتَلُوا (الحجرات: ٩)",
+        desc: "Pelaku dosa besar tidak kafir, melainkan mukmin yang berkurang imannya (fasik milli) di bawah kehendak Allah.",
+        left: "Khawarij (Mengkafirkan Dosa Besar)", mid: "Mukmin Naqisul Iman (Fasik Milli)", right: "Murji'ah ('Dosa Tak Merusak Iman')",
+        dalil: "Iman bertambah dengan taat dan berkurang dengan maksiat."
+      },
+      {
+        id: 5, title: "Langkah Unta & Takdir Ilahi (Bab Al-Qadar)",
+        arab: "لِمَن شَاءَ مِنكُمْ أَن يَسْتَقِيمَ (التكوير: ٢٨)",
+        desc: "Allah menciptakan segala sesuatu termasuk perbuatan hamba, namun manusia memiliki kehendak dan ikhtiar nyata.",
+        left: "Qadariyyah (Menolak Takdir)", mid: "Allah Pencipta, Hamba Berikhtiar", right: "Jabriyyah (Fatalis 'Dahan Ditiup Angin')",
+        dalil: "Kehendak manusia ada di bawah kehendak Allah Rabbul 'Alamin."
+      },
+      {
+        id: 6, title: "Cahaya Pelita Akal (Manzilah Al-'Aql)",
+        arab: "سَنُرِيهِمْ آيَاتِنَا فِي الْآفَاقِ (فصلت: ٥٣)",
+        desc: "Akal adalah nikmat agung, manathut taklif (poros beban syariat) dan sarana tadabbur, bukan pembuat hukum.",
+        left: "Jumud / Ta'thil (Membekukan Akal)", mid: "Akal Bertadabbur & Tunduk Wahyu", right: "Ghuluw (Akal Menghakimi Syariat)",
+        dalil: "Akal sehat membedakan yang baik dari yang buruk."
+      },
+      {
+        id: 7, title: "Pedoman Salaf: Wahyu dan Akal",
+        arab: "العقل الصريح لا يعارض النقل الصحيح",
+        desc: "Kaidah Salaf: Mendahulukan wahyu atas akal (Taqdimun Naql 'alal 'Aql). Akal sehat selalu selaras dengan dalil shahih.",
+        left: "Rasionalis Buta (Wahyu Dihakimi Akal)", mid: "Wahyu Asal, Akal adalah Pengikut", right: "Mengabaikan Penalaran Syar'i",
+        dalil: "Bila tampak pertentangan, akal manusialah yang terbatas."
+      },
+      {
+        id: 8, title: "Fatamorgana Pengingkaran Hal Ghaib",
+        arab: "الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ (البقرة: ٣)",
+        desc: "Bahaya mendewakan akal berujung pada Inkarul Ghaibiyyat: menolak Shirath, Haudh, Mizan, siksa kubur, Dajjal, jin dan sihir.",
+        left: "Mu'tazilah Modern (Menolak Ghaib)", mid: "Mengimani Berita Ghaib yang Shahih", right: "Khurafat Tanpa Dalil Syariat",
+        dalil: "Ciri orang bertakwa adalah beriman kepada hal ghaib."
+      },
+      {
+        id: 9, title: "Ketundukan Sahabat di Hajar Aswad",
+        arab: "لَوْلا أَنِّي رَأَيْتُ رَسُولَ اللَّهِ يُقَبِّلُكَ مَا قَبَّلْتُكَ",
+        desc: "Kaidah agung: La majala lil 'aql idza shahha al-khabar. Ucapan Umar bin Khattab r.a. menunjukkan ketundukan mutlak pada sunnah.",
+        left: "Rasionalis Menolak jika Belum Paham", mid: "Sami'na wa Atha'na (Taat Sunnah)", right: "Mengultuskan Benda / Khurafat",
+        dalil: "HR. Al-Bukhari & Muslim (Atsar Umar bin Khattab r.a.)."
+      },
+      {
+        id: 10, title: "Lima Pilar Pembela Wahyu di Atas Akal",
+        arab: "الَّذِينَ يُجَادِلُونَ فِي آيَاتِ اللَّهِ (غافر: ٣٥)",
+        desc: "1. Akal beragam sedangkan syariat tsabit (tetap). 2. Akal terbatas dari hal ghaib. 3. Menghindari melemahnya tsiqah syariat. 4. Akal sehat menuntut tunduk. 5. Tuntutan iman sejati.",
+        left: "Relativisme Akal yang Berubah-ubah", mid: "Syariat Rabbaniyah yang Tsabit", right: "Menolak Berpikir Tadabbur",
+        dalil: "Al-Qur'an Surat Ghafir ayat 35."
+      }
+    ];
+
+    // Data 20 Kuis Interaktif
+    const QUIZ = [
+      { q: "Di manakah posisi Ahlus Sunnah dalam hal Tauhid Rububiyyah & Uluhiyyah?", opt: ["Antara Ateisme dan Wahdatul Wujud", "Antara Khawarij dan Murji'ah", "Antara Qadariyyah dan Jabriyyah", "Antara Jahmiyyah dan Karramiyyah"], a: 0, ref: "Hal. 47" },
+      { q: "Apa slogan kaum komunis/ateis terkait ketuhanan?", opt: ["Tiada sesembahan selain Allah", "Tidak ada tuhan & hidup hanyalah materi (La Ilaha wal Hayatu Maddah)", "Akal di atas wahyu", "Manusia bebas tanpa takdir"], a: 1, ref: "Hal. 47" },
+      { q: "Apa kesesatan kaum Wahdatul Wujud dalam memandang Khaliq?", opt: ["Menganggap Allah ada di langit", "Menolak nama-nama Allah", "Menjadikan Khaliq adalah hakikat makhluk itu sendiri", "Mengatakan Allah terpisah dari alam"], a: 2, ref: "Hal. 47" },
+      { q: "Dalam bab Asma' wa Sifat, Ahlus Sunnah berada di antara:", opt: ["Khawarij dan Syi'ah", "Al-Mu'aththilah (Jahmiyyah) dan Al-Musyabbihah (Karramiyyah)", "Murji'ah dan Qadariyyah", "Jabriyyah dan Asy'ariyyah"], a: 1, ref: "Hal. 47" },
+      { q: "Penyimpangan Jahmiyyah dalam sifat-sifat Allah disebut Ta'thil, yaitu:", opt: ["Menolak dan meniadakan sifat-sifat Allah", "Menyerupakan Allah dengan manusia", "Menetapkan sifat tanpa takwil", "Mengkafirkan ahli kiblat"], a: 0, ref: "Hal. 47" },
+      { q: "Kekeliruan Karramiyyah (Musyabbihah) adalah:", opt: ["Menolak hari kiamat", "Menyerupakan sifat Allah dengan sifat makhluk (Tasybih)", "Menolak hadits ahad", "Mengatakan Al-Qur'an makhluk"], a: 1, ref: "Hal. 47" },
+      { q: "Sikap Ahlus Sunnah terhadap pelaku dosa besar adalah:", opt: ["Kafir kekal di neraka", "Dosa tidak membahayakan iman", "Mukmin yang berkurang imannya (Fasik Milli)", "Bukan mukmin dan bukan kafir"], a: 2, ref: "Hal. 47" },
+      { q: "Ucapan kaum Murji'ah Ibahiyyah terkait maksiat:", opt: ["Pelaku maksiat pasti musyrik", "Maksiat tidak membahayakan iman sebagaimana taat tak bermanfaat bagi kafir", "Iman hanya amal perbuatan", "Dosa kecil dihukum kafir"], a: 1, ref: "Hal. 47" },
+      { q: "Jabriyyah mengibaratkan manusia bagaikan:", opt: ["Penunggang kuda", "Dahan pohon yang terombang-ambing dihembus angin", "Batu karang", "Bintang di langit"], a: 1, ref: "Hal. 47" },
+      { q: "Kekeliruan Qadariyyah dalam bab takdir adalah:", opt: ["Menolak kehendak manusia", "Mengklaim Allah tidak menciptakan perbuatan hamba & tidak mentakdirkannya", "Menolak hisab", "Mengatakan takdir berubah tiap detik"], a: 1, ref: "Hal. 47" },
+      { q: "Makna 'al-wasath' menurut Ibnu Katsir (QS. Al-Baqarah: 143):", opt: ["Kompromi mencari aman", "Al-Khiyar wal Ajwad (terbaik dan paling adil)", "Kelompok netral tanpa sikap", "Golongan mayoritas"], a: 1, ref: "Hal. 48" },
+      { q: "Arti kata 'Ad-Duljah' (الدلجة) dalam hadits kemudahan agama:", opt: ["Terik siang hari", "Kegelapan waktu malam (beribadah di waktu malam)", "Badai pasir", "Waktu dhuha"], a: 1, ref: "Hal. 48" },
+      { q: "Umat Islam dijauhkan dari sikap tafrith Yahudi dan:", opt: ["Kekejaman Romawi", "Sikap ghuluw / ifrath kaum Nasrani", "Ajaran Majusi", "Penyembah berhala"], a: 1, ref: "Hal. 48" },
+      { q: "Akal disebut 'Manathut Taklif' karena:", opt: ["Akal yang membuat syariat", "Akal adalah syarat utama seseorang dikenai beban kewajiban syariat", "Akal menggantikan nabi", "Akal selalu benar"], a: 1, ref: "Hal. 49" },
+      { q: "Sikap 'Al-Jumud wat Ta'thil' terhadap akal adalah:", opt: ["Mendewakan akal", "Membekukan akal & enggan bertadabbur di alam semesta", "Membedah filsafat", "Menghafal rumus matematika"], a: 1, ref: "Hal. 49" },
+      { q: "Bahaya 'At-Tahsin wat Taqbih' (akal penentu baik-buruk mandiri):", opt: ["Menghafal Qur'an", "Memicu bid'ah, kesesatan, dan merusak nas-nas syariat", "Rajin shalat malam", "Belajar bahasa Arab"], a: 1, ref: "Hal. 49" },
+      { q: "Kaidah Salaf mengenai akal dan wahyu:", opt: ["Akal menghakimi wahyu", "Taqdimun Naql 'alal 'Aql (wahyu pokok, akal pengikut)", "Menghilangkan akal", "Mendahulukan mimpi"], a: 1, ref: "Hal. 50" },
+      { q: "Ketergantungan mutlak pada akal berakibat pada:", opt: ["Inkarul Ghaibiyyat (mengingkari Shirath, Mizan, siksa kubur, Dajjal)", "Lupa bacaan shalat", "Kalah berniaga", "Kurang tidur"], a: 0, ref: "Hal. 50-51" },
+      { q: "Keteladanan Umar bin Khattab r.a. saat mencium Hajar Aswad:", opt: ["Batu tersebut bertuah", "Ketundukan mutlak pada sunnah Nabi ﷺ (La majala lil 'aql)", "Membawa batu pulang", "Menolak mencium batu"], a: 1, ref: "Hal. 52" },
+      { q: "Poin 1 hal. 53: Mengapa akal tak boleh di atas syariat?", opt: ["Akal selalu berganti tiap tahun", "Akal manusia berbeda-beda (mutafawitah), syariat itu tsabit (tetap)", "Manusia tidak butuh akal", "Syariat diciptakan malaikat"], a: 1, ref: "Hal. 53" }
+    ];
+
+    let curSlide = 0;
+    let curQuiz = 0;
+    let userAns = new Array(20).fill(null);
+    let score = 0;
+    let water = 100;
+
+    // Slide Engine
+    function renderSlide(idx) {
+      curSlide = idx;
+      const s = SLIDES[idx];
+      document.getElementById('slide-step-counter').textContent = `Pos ${idx + 1} dari 10`;
+      document.getElementById('prev-slide-btn').disabled = idx === 0;
+      document.getElementById('next-slide-btn').textContent = idx === 9 ? 'Lanjut ke Kuis ❯' : 'Pos Berikutnya ❯';
+      document.getElementById('progress-bar').style.width = ((idx + 1) * 10) + '%';
+
+      document.getElementById('slide-render-area').innerHTML = `
+        <div class="space-y-4">
+          <div class="border-b border-amber-900/40 pb-3 flex flex-wrap justify-between items-baseline gap-2">
+            <div>
+              <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">POS KAFILAH ${s.id}</span>
+              <h3 class="text-xl sm:text-2xl font-bold text-amber-100">${s.title}</h3>
+            </div>
+            <div class="text-amber-300 font-amiri text-lg">${s.arab}</div>
+          </div>
+          <p class="text-xs sm:text-sm text-amber-100/90 leading-relaxed bg-black/40 p-3 rounded-xl border border-amber-900/40">${s.desc}</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+            <div class="p-3 rounded-xl bg-red-950/40 border border-red-900/50 text-xs">
+              <span class="text-red-400 font-bold block mb-1">⚠️ Ekstrem Kiri</span>
+              <span class="text-red-200/90">${s.left}</span>
+            </div>
+            <div class="p-3 rounded-xl bg-amber-900/60 border-2 border-amber-400 text-xs text-center shadow-lg">
+              <span class="text-amber-300 font-bold block mb-1">⭐ Wasathiyah Ahlus Sunnah</span>
+              <span class="text-amber-100 font-semibold">${s.mid}</span>
+            </div>
+            <div class="p-3 rounded-xl bg-purple-950/40 border border-purple-900/50 text-xs">
+              <span class="text-purple-400 font-bold block mb-1">⚡ Ekstrem Kanan</span>
+              <span class="text-purple-200/90">${s.right}</span>
+            </div>
+          </div>
+          <div class="text-xs text-amber-300/80 bg-amber-950/30 p-2.5 rounded-lg border border-amber-900/30">
+            📖 <strong>Dalil / Rujukan:</strong> ${s.dalil}
+          </div>
+        </div>
+      `;
+    }
+
+    document.getElementById('prev-slide-btn').onclick = () => { if (curSlide > 0) { playBeep(400, 0.1); renderSlide(curSlide - 1); } };
+    document.getElementById('next-slide-btn').onclick = () => {
+      if (curSlide < 9) { playBeep(500, 0.1); renderSlide(curSlide + 1); }
+      else { setTab('quiz'); }
+    };
+
+    // Quiz Engine
+    function renderQuiz(idx) {
+      curQuiz = idx;
+      const q = QUIZ[idx];
+      document.getElementById('quiz-badge').textContent = `Tantangan Gurun ${idx + 1} dari 20`;
+      document.getElementById('progress-bar').style.width = ((idx + 1) * 5) + '%';
+      const ans = userAns[idx];
+
+      const optsHtml = q.opt.map((o, oidx) => {
+        let btnCls = "w-full text-left p-3 rounded-xl border text-xs sm:text-sm font-medium transition flex items-start space-x-2 ";
+        if (ans !== null) {
+          if (oidx === q.a) btnCls += "bg-emerald-950/80 border-emerald-500 text-emerald-200";
+          else if (oidx === ans) btnCls += "bg-red-950/80 border-red-600 text-red-200";
+          else btnCls += "bg-black/30 border-amber-950/40 text-amber-100/30";
+        } else {
+          btnCls += "bg-black/60 border-amber-900/50 text-amber-100 hover:border-amber-400 hover:bg-amber-950/40 cursor-pointer";
+        }
+        return `<button class="${btnCls}" ${ans !== null ? 'disabled' : `onclick="selectAns(${idx}, ${oidx})"`}>
+          <span class="font-bold text-amber-400 uppercase">[${['A','B','C','D'][oidx]}]</span>
+          <span>${o}</span>
+        </button>`;
+      }).join('');
+
+      let feedback = '';
+      if (ans !== null) {
+        const isRight = ans === q.a;
+        feedback = `
+          <div class="mt-4 p-3 rounded-xl border ${isRight ? 'border-emerald-600 bg-emerald-950/40 text-emerald-200' : 'border-red-600 bg-red-950/40 text-red-200'} text-xs">
+            <strong>${isRight ? '✓ Jawaban Tepat!' : '✗ Kurang Tepat! Kunci Jawaban: ' + ['A','B','C','D'][q.a]}</strong>
+            <div class="text-amber-300/80 mt-1">Sumber: Diktat Akidah ${q.ref}</div>
+          </div>
+        `;
+      }
+
+      document.getElementById('quiz-render-area').innerHTML = `
+        <div class="space-y-4">
+          <h3 class="text-sm sm:text-base font-bold text-amber-100 leading-relaxed">${idx + 1}. ${q.q}</h3>
+          <div class="space-y-2 pt-2">${optsHtml}</div>
+          ${feedback}
+          <div class="flex justify-between pt-4 border-t border-amber-900/40 mt-4">
+            <button class="px-3 py-1.5 rounded-lg bg-amber-950 text-amber-200 text-xs font-bold border border-amber-800 disabled:opacity-30" ${idx === 0 ? 'disabled' : `onclick="renderQuiz(${idx - 1})"`}>❮ Soal Lalu</button>
+            ${idx === 19 ? `<button class="px-4 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold shadow" onclick="setTab('eval')">Lihat Evaluasi 🏆</button>` : `<button class="px-3 py-1.5 rounded-lg bg-amber-600 text-white text-xs font-bold shadow" onclick="renderQuiz(${idx + 1})">Soal Berikut ❯</button>`}
+          </div>
+        </div>
+      `;
+    }
+
+    window.selectAns = function(qidx, oidx) {
+      if (userAns[qidx] !== null) return;
+      userAns[qidx] = oidx;
+      if (oidx === QUIZ[qidx].a) {
+        score += 5;
+        playBeep(700, 0.2);
+      } else {
+        water = Math.max(10, water - 5);
+        playBeep(200, 0.25);
+      }
+      document.getElementById('score-counter').textContent = score;
+      document.getElementById('water-counter').textContent = water + '%';
+      renderQuiz(qidx);
+    };
+
+    // Evaluation Engine
+    function renderEval() {
+      let correct = userAns.filter((a, i) => a === QUIZ[i].a).length;
+      let pct = Math.round((correct / 20) * 100);
+      document.getElementById('eval-percent').textContent = pct + '%';
+      
+      let rank = '';
+      let desc = '';
+      if (pct >= 90) {
+        rank = '🎖️ Syaikh Al-Qafilah (Pemandu Agung Gurun)';
+        desc = 'Maa syaa Allah! Pemahaman Anda sangat kokoh laksana oasis yang subur. Anda telah menguasai prinsip jalan tengah dan menempatkan akal di bawah wahyu secara sempurna.';
+      } else if (pct >= 75) {
+        rank = '🐪 Qaidul Kafilah (Pemimpin Kafilah Tangguh)';
+        desc = 'Alhamdulillah! Pemahaman Anda sangat baik dan selamat dari jurang ekstrem. Teruslah istiqamah di atas manhaj yang lurus.';
+      } else if (pct >= 60) {
+        rank = '🧭 Musafir Tholib (Penuntut Ilmu Gurun Gigih)';
+        desc = 'Langkah awal yang baik! Pelajari kembali beberapa pos akidah yang keliru agar kompas perjalanan Anda semakin tajam.';
+      } else {
+        rank = '⛺ Pengembara Pemula Gurun (Perlu Membaca Peta)';
+        desc = 'Jangan putus asa! Ulangi kembali 10 Slide materi Kafilah Wasathiyah untuk memperkuat pemahaman dasar akidah Anda.';
+      }
+      document.getElementById('eval-title').textContent = rank;
+      document.getElementById('eval-desc').textContent = desc;
+
+      const details = QUIZ.map((q, i) => {
+        const u = userAns[i];
+        const isRight = u === q.a;
+        return `
+          <div class="p-3 rounded-xl border ${isRight ? 'border-emerald-800/40 bg-emerald-950/20' : 'border-red-900/40 bg-red-950/20'} text-xs">
+            <div class="flex justify-between font-bold mb-1">
+              <span class="text-amber-200">Soal ${i + 1}: ${q.q}</span>
+              <span class="${isRight ? 'text-emerald-400' : 'text-red-400'}">${isRight ? '✓ Benar' : '✗ Salah'}</span>
+            </div>
+            <div class="text-amber-300/80">Jawaban Anda: ${u !== null ? q.opt[u] : 'Belum dijawab'} | Kunci: <strong>${q.opt[q.a]}</strong></div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('eval-details').innerHTML = details;
+    }
+
+    document.getElementById('eval-retry-btn').onclick = () => {
+      userAns.fill(null);
+      score = 0;
+      water = 100;
+      document.getElementById('score-counter').textContent = '0';
+      document.getElementById('water-counter').textContent = '100%';
+      setTab('quiz');
+    };
+
+    // Tab Controller
+    function setTab(tab) {
+      document.getElementById('view-slides-section').classList.add('hidden');
+      document.getElementById('view-quiz-section').classList.add('hidden');
+      document.getElementById('view-eval-section').classList.add('hidden');
+
+      document.getElementById('tab-slides').className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-stone-900 text-amber-300 hover:bg-amber-950 border border-amber-800";
+      document.getElementById('tab-quiz').className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-stone-900 text-amber-300 hover:bg-amber-950 border border-amber-800";
+      document.getElementById('tab-eval').className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-stone-900 text-amber-300 hover:bg-amber-950 border border-amber-800";
+
+      if (tab === 'slides') {
+        document.getElementById('view-slides-section').classList.remove('hidden');
+        document.getElementById('tab-slides').className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-600 text-white shadow";
+        renderSlide(curSlide);
+      } else if (tab === 'quiz') {
+        document.getElementById('view-quiz-section').classList.remove('hidden');
+        document.getElementById('tab-quiz').className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-600 text-white shadow";
+        renderQuiz(curQuiz);
+      } else if (tab === 'eval') {
+        document.getElementById('view-eval-section').classList.remove('hidden');
+        document.getElementById('tab-eval').className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-amber-600 text-white shadow";
+        renderEval();
+      }
+    }
+
+    document.getElementById('tab-slides').onclick = () => setTab('slides');
+    document.getElementById('tab-quiz').onclick = () => setTab('quiz');
+    document.getElementById('tab-eval').onclick = () => setTab('eval');
+
+    // Inisialisasi awal
+    renderSlide(0);
+  </script>
+</body>
+</html>
